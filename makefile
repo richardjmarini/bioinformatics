@@ -32,6 +32,6 @@ rnapolymerase:
 
 protein:
 	echo
-	echo 'DNA -> PRotein Tests...'
+	echo 'DNA -> Protein Tests...'
 	echo 'GACTTGAC' | $(RNAPOLYMERASE) | $(RIBOSOME)
 
