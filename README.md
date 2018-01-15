@@ -1,1 +1,3 @@
 # bioinformatics
+
+make -s
