@@ -18,10 +18,9 @@ class Cell:
 
 class Alignment:
  
-    def __init__(self, streams= 2, gap_score= 1):
+    def __init__(self, streams= 2):
 
          self.streams= streams
-         self.gap_score= gap_score
          self.buffer= []
 
          for stream in range(0, streams):
@@ -44,47 +43,13 @@ class Alignment:
         return ''.join([nucleotide.code for nucleotide in self.buffer[1]])
 
     @staticmethod
-    def get_simularity_matrix(sequence1, sequence2):
+    def get_needleman_wunsch_matrix(sequence1, sequence2, gap_score= -1):
 
-        matrix= []
-        for i in range(0, len(sequence2)):
-            new= []
-            for j in range(0, len(sequence1)):
-                new.append(0) 
-            matrix.append(new)
-
-        for i in range(0, len(sequence1)):
-
-            for j in range(0, len(sequence2)):
-                if sequence1[i].code == sequence2[j].code:
-                    # nucleotide match
-                    matrix[j][i]= 1 # 2
-                else:
-                    matrix[j][i]= -1
-              
-                """
-                elif sequence1[i].type == sequence2[j].type:
-                    # transition:
-                    # purine w/ purine or pyrimidine w/ pyrimidine
-                    matrix[j][i]= 1
-                else:          
-                    # transversion:
-                    # purine w/ pyrimidine 
-                    matrix[j][i]= -1
-                """
-
-        return matrix
-
-    @staticmethod
-    def get_needleman_wunsch_matrix(sequence1, sequence2, gap_score= 1):
-
-        simularity_matrix= Alignment.get_simularity_matrix(sequence1, sequence2)
- 
         # create blank matrix
         matrix= []
-        for i in range(0, len(sequence2) + 1, gap_score):
+        for i in range(0, -len(sequence2) - 1, gap_score):
             new= []
-            for j in range(0, len(sequence1) + 1, gap_score):
+            for j in range(0, -len(sequence1) - 1, gap_score):
                 new.append(0)
             matrix.append(new)
 
@@ -97,8 +62,8 @@ class Alignment:
         for i in range(1, len(sequence2) + 1):
             for j in range(1, len(sequence1) + 1): 
 
-                horz= matrix[i-1][j] + -1
-                vert= matrix[i][j-1] + -1
+                horz= matrix[i-1][j] + gap_score
+                vert= matrix[i][j-1] + gap_score
 
                 if sequence2[i-1].code == sequence1[j-1].code:
                     diag= matrix[i-1][j-1] + 1
@@ -111,12 +76,8 @@ class Alignment:
 
     def align(self):
 
-        self.simularity_matrix= Alignment.get_simularity_matrix(self.buffer[0], self.buffer[1])
+        self.needleman_wunsch_matrix= self.get_needleman_wunsch_matrix(self.buffer[0], self.buffer[1])
 
-        self.needleman_wunsch_matrix= self.get_needleman_wunsch_matrix(self.buffer[0], self.buffer[1], self.gap_score)
-
-        pprint(self.simularity_matrix)
-        print
         pprint(self.needleman_wunsch_matrix)
 
 
