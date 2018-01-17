@@ -43,7 +43,13 @@ class Alignment:
         return ''.join([nucleotide.code for nucleotide in self.buffer[1]])
 
     @staticmethod
-    def get_needleman_wunsch_matrix(sequence1, sequence2, gap_score= -1):
+    def get_needleman_wunsch_matrix(
+        sequence1,
+        sequence2,
+        gap_score= -1,
+        match= 1,
+        mismatch= -1
+    ):
 
         # create blank matrix
         matrix= []
@@ -66,9 +72,9 @@ class Alignment:
                 vert= matrix[i][j-1] + gap_score
 
                 if sequence2[i-1].code == sequence1[j-1].code:
-                    diag= matrix[i-1][j-1] + 1
+                    diag= matrix[i-1][j-1] + match
                 else:
-                    diag= matrix[i-1][j-1] - 1
+                    diag= matrix[i-1][j-1] + mismatch
 
                 matrix[i][j]= max(horz, vert, diag)
 
@@ -76,7 +82,10 @@ class Alignment:
 
     def align(self):
 
-        self.needleman_wunsch_matrix= self.get_needleman_wunsch_matrix(self.buffer[0], self.buffer[1])
+        self.needleman_wunsch_matrix= self.get_needleman_wunsch_matrix(
+            self.buffer[0],
+            self.buffer[1]
+        )
 
         pprint(self.needleman_wunsch_matrix)
 
