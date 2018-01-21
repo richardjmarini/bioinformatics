@@ -47,17 +47,15 @@ class Alignment:
 
         # create blank matrix
         matrix= []
-        for row in range(0, -len(sequence2) - 1, gap_score):
-            new= []
-            for col in range(0, -len(sequence1) - 1, gap_score):
-                new.append(0)
-            matrix.append(new)
+        for row in range(0, len(sequence2) + 1): 
+            new_row= [0] * (len(sequence1) + 1)
+            matrix.append(new_row)
 
         # initalize matrix w/ gap scores
         for row in range(0, len(sequence2) + 1):
-            matrix[row][0]= -row
+            matrix[row][0]= gap_score * row
         for col in range(0, len(sequence1) + 1):
-            matrix[0][col]= -col
+            matrix[0][col]= gap_score * col
 
         for row in range(1, len(sequence2) + 1):
             for col in range(1, len(sequence1) + 1): 
