@@ -43,75 +43,96 @@ class Alignment:
         return ''.join([nucleotide.code for nucleotide in self.buffer[1]])
 
     @staticmethod
-    def get_needleman_wunsch_matrix(
-        sequence1,
-        sequence2,
-        gap_score= -1,
-        match= 1,
-        mismatch= -1
-    ):
+    def needleman_wunsch(sequence1, sequence2, gap_score= -1, match= 1, mismatch= -1):
 
         # create blank matrix
         matrix= []
-        for i in range(0, -len(sequence2) - 1, gap_score):
+        for row in range(0, -len(sequence2) - 1, gap_score):
             new= []
-            for j in range(0, -len(sequence1) - 1, gap_score):
+            for col in range(0, -len(sequence1) - 1, gap_score):
                 new.append(0)
             matrix.append(new)
 
         # initalize matrix w/ gap scores
-        for i in range(0, len(sequence2) + 1):
-            matrix[i][0]= -i
-        for j in range(0, len(sequence1) + 1):
-            matrix[0][j]= -j 
+        for row in range(0, len(sequence2) + 1):
+            matrix[row][0]= -row
+        for col in range(0, len(sequence1) + 1):
+            matrix[0][col]= -col
 
-        for i in range(1, len(sequence2) + 1):
-            for j in range(1, len(sequence1) + 1): 
+        for row in range(1, len(sequence2) + 1):
+            for col in range(1, len(sequence1) + 1): 
 
-                horz= matrix[i-1][j] + gap_score
-                vert= matrix[i][j-1] + gap_score
+                horz= matrix[row-1][col] + gap_score
+                vert= matrix[row][col-1] + gap_score
 
-                if sequence2[i-1].code == sequence1[j-1].code:
-                    diag= matrix[i-1][j-1] + match
+                if sequence2[row-1].code == sequence1[col-1].code:
+                    diag= matrix[row-1][col-1] + match
                 else:
-                    diag= matrix[i-1][j-1] + mismatch
+                    diag= matrix[row-1][col-1] + mismatch
 
-                matrix[i][j]= max(horz, vert, diag)
+                matrix[row][col]= max(horz, vert, diag)
 
         return matrix
 
-    def align(self):
+    def compute_simularity(self, algorithm= "needleman_wunsch"):
 
-        self.needleman_wunsch_matrix= self.get_needleman_wunsch_matrix(
-            self.buffer[0],
-            self.buffer[1]
-        )
+        if hasattr(self, algorithm):
+            handler= getattr(self, algorithm)
+            matrix= handler(self.buffer[0], self.buffer[1])
+        else:
+            raise Exception("Unkown Algorith: %s" % (algorithm))
 
-        pprint(self.needleman_wunsch_matrix)
+        return matrix 
 
+    def align(self, matrix, row, col, align1, align2, l= 0, gap_score= -1, match= 1, mismatch= -1):
 
-    def __str__(self):
+        if row <= 0  and col <= 0:
+            l= 0 
+        elif row > 0 and col > 0 and matrix[row][col] == matrix[row-1][col] + gap_score:
+            self.align(matrix, row-1, col, align1, align2, l, gap_score, match, mismatch)
+            l+= 1  
+            align1[l]= '-'
+            align2[l]= self.buffer[1][row].code
+        elif row > 0 and col > 0 and (matrix[row][col] == matrix[row-1][col-1] + match or  matrix[row][col] == matrix[row-1][col-1] + mismatch):
+            self.align(matrix, row-1, col-1, align1, align2, l, gap_score, match, mismatch)
+            l+= 1
 
-        m= self.needleman_wunsch_matrix
-        s= ''
-        s+=  '        ' + '   '.join([b.code for b in self.buffer[0]]) + '\n'
-        for i in range(1, len(self.buffer[1]) + 1):
-            s+= [b.code for b in self.buffer[0]][i-1]
-            for j in range(1, len(self.buffer[0]) + 1):
-                   s+= '%4i' % (m[i][j])
-            s+= '\n'
+            align1[l]= self.buffer[0][col].code
+            align2[l]= self.buffer[1][row].code
+        else: #elif row > 0 and col > 0 and matrix[row][col] == matrix[row][col-1] + gap_score:
+            self.align(row, col-1, l, align1, align2, gap_score, match, mismatch)
+            l+= 1
+            align1[l]= self.buffer[0][col].code
+            align2[l]= '-'
 
-        return s
-                
-
-
+        return (align1, align2)
 
 if __name__ == '__main__':
 
     alignment= Alignment(streams= 2)
     alignment.feed('CGTGAATTCAT', 0)
     alignment.feed('GACTTAC', 1)
-    alignment.align()
 
-    #print alignment
-    
+    print 'sequences...'
+    print [n.code for n in alignment.buffer[0]]
+    print [n.code for n in alignment.buffer[1]]
+    print
+
+
+    matrix= alignment.compute_simularity("needleman_wunsch")
+    print 'needleman-wunsch matrix...'
+    pprint(matrix)
+    print
+
+    cols= len(alignment.buffer[0]) - 1 
+    rows= len(alignment.buffer[1]) - 1
+
+    align1= ['-'] * cols 
+    align2= ['-'] * cols
+   
+    alignment.align(matrix, rows, cols, align1, align2)
+
+    print 'alignments...'
+    print align1
+    print align2
+    print
