@@ -43,7 +43,8 @@ class Alignment:
         return ''.join([nucleotide.code for nucleotide in self.buffer[1]])
 
     @staticmethod
-    def needleman_wunsch(sequence1, sequence2, gap_score= -1, match= 1, mismatch= -1):
+    def needleman_wunsch(sequence1, sequence2, gap_score= -1, match= 1,\
+        mismatch= -1):
 
         # create blank matrix
         matrix= []
@@ -78,32 +79,65 @@ class Alignment:
             handler= getattr(self, algorithm)
             matrix= handler(self.buffer[0], self.buffer[1])
         else:
-            raise Exception("Unkown Algorith: %s" % (algorithm))
+            raise Exception("Unkown Algorithm: %s" % (algorithm))
 
         return matrix 
 
-    def align(self, matrix, row, col, align1, align2, l= 0, gap_score= -1, match= 1, mismatch= -1):
+    def align(self, matrix, row, col, alignment_left, alignment_top,\
+        alignment_position= 0, gap_score= -1, match= 1, mismatch= -1):
 
-        if row <= 0  and col <= 0:
-            l= 0 
-        elif row > 0 and col > 0 and matrix[row][col] == matrix[row-1][col] + gap_score:
-            self.align(matrix, row-1, col, align1, align2, l, gap_score, match, mismatch)
-            l+= 1  
-            align1[l]= '-'
-            align2[l]= self.buffer[1][row].code
-        elif row > 0 and col > 0 and (matrix[row][col] == matrix[row-1][col-1] + match or  matrix[row][col] == matrix[row-1][col-1] + mismatch):
-            self.align(matrix, row-1, col-1, align1, align2, l, gap_score, match, mismatch)
-            l+= 1
+        if row <= 0 or col <= 0:
 
-            align1[l]= self.buffer[0][col].code
-            align2[l]= self.buffer[1][row].code
-        else: #elif row > 0 and col > 0 and matrix[row][col] == matrix[row][col-1] + gap_score:
-            self.align(row, col-1, l, align1, align2, gap_score, match, mismatch)
-            l+= 1
-            align1[l]= self.buffer[0][col].code
-            align2[l]= '-'
+            alignment_position= 0
+ 
+            if row <= 0 and col > 0:
+                alignment_top[alignment_position]= '-'
+                alignment_left[alignment_position]= self.buffer[1][row-1].code
+            elif col <= 0 and row > 0:
+                alignment_top[alignment_position]= self.buffer[0][col-1].code
+                alignment_left[alignment_position]= '-'
+            else:
+                alignment_top[alignment_position]= self.buffer[0][col-1].code
+                alignment_left[alignment_position]= self.buffer[1][row-1].code
 
-        return (align1, align2)
+        elif row > 0 and col > 0\
+            and matrix[row][col] == (matrix[row][col-1] + gap_score):
+
+            (alignment_left, alignment_top, alignment_position)= self.align(\
+                matrix, row, col-1, alignment_left, alignment_top,\
+                alignment_position, gap_score, match, mismatch
+            )
+
+            alignment_position+= 1
+            alignment_top[alignment_position]= '-'
+            alignment_left[alignment_position]= self.buffer[0][col-1].code
+
+        elif row > 0 and col > 0\
+            and ( (matrix[row][col] == (matrix[row-1][col-1] + match))\
+            or (matrix[row][col] == (matrix[row-1][col-1] + mismatch)) ):
+
+            (alignment_left, alignment_top, alignment_position)= self.align(\
+                matrix, row-1, col-1, alignment_left, alignment_top,\
+                alignment_position, gap_score, match, mismatch\
+             )
+
+            alignment_position+= 1
+            alignment_top[alignment_position]= self.buffer[1][row-1].code
+            alignment_left[alignment_position]= self.buffer[0][col-1].code
+
+        else: #elif row > 0 and col > 0\
+            #and matrix[row][col] == (matrix[row-1][col] + gap_score):
+
+            (alignment_left, alignment_top, alignment_position)= self.align(\
+                matrix, row-1, col, alignment_left, alignment_top,\
+                alignment_position, gap_score, match, mismatch\
+            )
+        
+            alignment_position+= 1  
+            alignment_top[alignment_position]= self.buffer[1][row-1].code
+            alignment_left[alignment_position]= '-'
+
+        return (alignment_left, alignment_top, alignment_position)
 
 if __name__ == '__main__':
 
@@ -122,15 +156,22 @@ if __name__ == '__main__':
     pprint(matrix)
     print
 
-    cols= len(alignment.buffer[0]) - 1 
-    rows= len(alignment.buffer[1]) - 1
+    cols= len(alignment.buffer[0]) # 1 
+    rows= len(alignment.buffer[1]) # 1
 
-    align1= ['-'] * cols 
-    align2= ['-'] * cols
+    alignment_left= []
+    alignment_top= []
+    for col in range(0, max(cols, rows)):
+        alignment_left.append('-')
+        alignment_top.append('-')
+
+
+    #alignment_left= ['-'] * cols 
+    #alignment_top= ['-'] * cols
    
-    alignment.align(matrix, rows, cols, align1, align2)
+    alignment.align(matrix, rows, cols, alignment_left, alignment_top)
 
     print 'alignments...'
-    print align1
-    print align2
+    print alignment_left
+    print alignment_top
     print
