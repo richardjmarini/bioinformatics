@@ -4,18 +4,6 @@ from sys import stdin, stdout
 from pprint import pprint
 from nucleotide import Nucleotide
 
-class Cell:
-
-    def __init__(self, value, previous= None):
-
-        self.value= value
-        self.previous= previous
-
-    def __str__(self):
-
-        return self.value
-    
-
 class Alignment:
  
     def __init__(self, streams= 2):
