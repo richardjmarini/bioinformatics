@@ -138,6 +138,7 @@ if __name__ == '__main__':
         for nucleotide in sequence:
             print nucleotide.code,
         print
+    print
 
     matrix= alignment.compute_simularity("needleman_wunsch")
     print 'needleman-wunsch matrix...'
