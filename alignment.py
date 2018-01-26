@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from argparse import ArgumentParser
 from sys import stdin, stdout
 from pprint import pprint
 from nucleotide import Nucleotide
@@ -56,8 +57,9 @@ class Alignment:
 
         return matrix
 
-    def compute_simularity(self, algorithm= "needleman_wunsch"):
+    def compute_simularity(self, algorithm= "needleman-wunsch"):
 
+        algorithm= algorithm.replace('-', '_')
         if hasattr(self, algorithm):
             handler= getattr(self, algorithm)
             matrix= handler(self.sequences[0], self.sequences[1])
@@ -83,6 +85,7 @@ class Alignment:
                 alignment_t[alignment_position]= self.sequences[0][col-1].code
                 alignment_s[alignment_position]= self.sequences[1][row-1].code
 
+
         elif row > 0 and col > 0\
             and matrix[row][col] == (matrix[row][col-1] + gap_score):
 
@@ -90,7 +93,6 @@ class Alignment:
                 matrix, row, col-1, alignment_s, alignment_t,\
                 alignment_position, gap_score, match, mismatch
             )
-
             alignment_position+= 1
             alignment_t[alignment_position]= '-'
             alignment_s[alignment_position]= self.sequences[0][col-1].code
@@ -125,13 +127,20 @@ class Alignment:
 
 if __name__ == '__main__':
 
-    sequence1= 'CGTGAATTCAT'
-    sequence2= 'GACTTAC'
+    parser= ArgumentParser(description ='Aligns nucleotide sequences')
+    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+    parser.add_argument('--algorithm', default= 'needleman-wunsch', help= 'name of similarity algorithm to use')
 
-    alignment= Alignment(sequences= [sequence1, sequence2])
-    #alignment.feed('CGTGA', 0)
-    #alignment.feed('ATTCAT', 0)
-    #alignment.feed('GACTTAC', 1)
+    arguments= parser.parse_args()
+    if arguments.sequences is None:
+        print "missing sequences argument"
+        parser.print_help()
+        exit(-1)
+
+    sequences= arguments.sequences
+    algorithm= arguments.algorithm
+
+    alignment= Alignment(sequences= sequences)
 
     print 'sequences...'
     for sequence in alignment.sequences:
@@ -140,16 +149,16 @@ if __name__ == '__main__':
         print
     print
 
-    matrix= alignment.compute_simularity("needleman_wunsch")
+    matrix= alignment.compute_simularity(algorithm)
     print 'needleman-wunsch matrix...'
     pprint(matrix)
     print
 
-    length_t= len(sequence1)
-    length_s= len(sequence2)
+    length_t= len(sequences[0])
+    length_s= len(sequences[1])
     length= max(length_s, length_t)
-    alignment_s= ['-'] * length
-    alignment_t= ['-'] * length
+    alignment_s= ['-'] * (length + 1)
+    alignment_t= ['-'] * (length + 1)
    
     alignment.traceback(matrix, length_s, length_t, alignment_s, alignment_t)
 
