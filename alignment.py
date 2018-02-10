@@ -14,8 +14,8 @@ class Alignment:
          for sequence in sequences:
              self.sequences.append(map(Nucleotide, list(sequence)))
 
-    def feed(self, dna, stream= 0): 
-         dna= map(Nucleotide, list(dna))
+    def feed(self, sequence, stream= 0): 
+         sequence= map(Nucleotide, list(sequence))
  
          try:
              sequence= self.sequences[stream]
@@ -23,7 +23,8 @@ class Alignment:
               for i in range(0, stream + 1):
                   self.sequences.append([])
           
-         self.sequences[stream]+= dna
+         self.sequences[stream]+= sequence
+
    
     @staticmethod
     def needleman_wunsch(sequence1, sequence2, gap_score= -1, match= 1,\
@@ -136,6 +137,8 @@ if __name__ == '__main__':
         parser.print_help()
         exit(-1)
 
+    alignment= Alignment()
+
     sequences= []
     if '-' in arguments.sequences:
         while True:
@@ -146,11 +149,13 @@ if __name__ == '__main__':
             sequences= nucleotides.split("\r")
     else:
         sequences= arguments.sequences
-    algorithm= arguments.algorithm
 
-    alignment= Alignment(sequences= sequences)
+    read_ctr= 0
+    for sequence in sequences:
+        alignment.feed(sequence, read_ctr)
+        read_ctr+= 1
 
-    matrix= alignment.compute_simularity(algorithm)
+    matrix= alignment.compute_simularity(arguments.algorithm)
 
     length_t= len(sequences[0])
     length_s= len(sequences[1])

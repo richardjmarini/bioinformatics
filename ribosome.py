@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from argparse import ArgumentParser
 from sys import stdin, stdout
 
 from aminoacid import AminoAcid
@@ -154,14 +155,27 @@ class Ribosome:
 
 if __name__ == '__main__':
 
+    parser= ArgumentParser(description ='Aligns nucleotide sequences')
+    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+
+    arguments= parser.parse_args()
+    if arguments.sequences is None:
+        print "missing sequences argument"
+        parser.print_help()
+        exit(-1)
+
     ribosome= Ribosome()
 
-    while True:
-        nucleotides= stdin.read()
-        if not nucleotides:
-            break
-        nucleotides= nucleotides[:-1]
-        ribosome.feed(nucleotides)
+    if '-' in arguments.sequences:
+
+        while True:
+             nucleotides= stdin.read()
+             if not nucleotides:
+                 break
+             nucleotides= nucleotides[:-1]
+             ribosome.feed(nucleotides)
+    else:
+        map(ribosome.feed, arguments.sequences)
 
     for chain in ribosome.peptide_chains:
         print >> stdout, ''.join(map(str, chain))
