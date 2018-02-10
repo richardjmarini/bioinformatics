@@ -155,7 +155,7 @@ class Ribosome:
 
 if __name__ == '__main__':
 
-    parser= ArgumentParser(description ='Aligns nucleotide sequences')
+    parser= ArgumentParser(description= 'Convert nucleotide sequence to polypeptide chain')
     parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
 
     arguments= parser.parse_args()

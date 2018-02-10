@@ -29,12 +29,12 @@ ribosome:
 rnapolymerase:
 	echo
 	echo 'RNA Polymerase Tests...'
-	echo 'GACTTGAC' | $(RNAPOLYMERASE)
+	echo 'GACTTGAC' | $(RNAPOLYMERASE) --sequences -
 
 protein:
 	echo
 	echo 'DNA -> Protein Tests...'
-	echo 'GACTTGAC' | $(RNAPOLYMERASE) | $(RIBOSOME) --sequences -
+	echo 'GACTTGAC' | $(RNAPOLYMERASE) --sequences - | $(RIBOSOME) --sequences -
 
 alignment:
 	echo

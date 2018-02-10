@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from argparse import ArgumentParser
 from sys import stdin, stdout
 
 class RNAPolymarse:
@@ -31,12 +32,25 @@ class RNAPolymarse:
 
 if __name__ == '__main__':
 
+    parser= ArgumentParser(description= 'Converts nucleotide sequences into mRNA')
+    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+
+    arguments= parser.parse_args()
+    if arguments.sequences is None:
+        print "missing sequences argument"
+        parser.print_help()
+        exit(-1)
+
     rnapolymarse= RNAPolymarse()
-    while True:
-        nucleotides= stdin.read()
-        if not nucleotides:
-            break
-        nucleotides= nucleotides[:-1]
-        rnapolymarse.feed(nucleotides)
+
+    if '-' in arguments.sequences:
+        while True:
+            nucleotides= stdin.read()
+            if not nucleotides:
+                break
+            nucleotides= nucleotides[:-1]
+            rnapolymarse.feed(nucleotides)
+    else:
+        map(rnapolymarse.feed, arguments.sequences)
 
     print >> stdout, ''.join(rnapolymarse.mRNA)
