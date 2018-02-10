@@ -27,7 +27,6 @@ class Alignment:
              self.buffer.append([])
 
     def feed(self, dna, stream= 0): 
-
          dna= map(Nucleotide, list(dna))
 
          self.buffer[stream]+= dna
@@ -142,8 +141,17 @@ class Alignment:
 if __name__ == '__main__':
 
     alignment= Alignment(streams= 2)
-    alignment.feed('CGTGAATTCAT', 0)
-    alignment.feed('GACTTAC', 1)
+
+    while True:
+        nucleotides= stdin.read()
+        if not nucleotides:
+            break
+        nucleotides= nucleotides[:-1]
+
+        read_ctr= 0
+        for nucleotide_read in nucleotides.split("\r"):
+            alignment.feed(nucleotide_read, read_ctr)
+            read_ctr+= 1
 
     print 'sequences...'
     print [n.code for n in alignment.buffer[0]]
@@ -156,8 +164,8 @@ if __name__ == '__main__':
     pprint(matrix)
     print
 
-    cols= len(alignment.buffer[0]) # 1 
-    rows= len(alignment.buffer[1]) # 1
+    cols= len(alignment.buffer[0]) #+ 1 
+    rows= len(alignment.buffer[1]) #+ 1
 
     alignment_left= []
     alignment_top= []

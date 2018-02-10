@@ -1,7 +1,8 @@
 RIBOSOME=./ribosome.py
 RNAPOLYMERASE=./rnapolymerase.py
+ALIGNMENT=./alignment.py
 
-all: ribosome rnapolymerase protein
+all: ribosome rnapolymerase protein alignment
 
 ribosome:
 	echo 'Ribosome Test....'
@@ -34,4 +35,9 @@ protein:
 	echo
 	echo 'DNA -> Protein Tests...'
 	echo 'GACTTGAC' | $(RNAPOLYMERASE) | $(RIBOSOME)
+
+alignment:
+	echo
+	echo 'Alignment tests....'
+	echo "CGTGAATTCATGACTTAC" | $(ALIGNMENT)
 
