@@ -39,5 +39,5 @@ protein:
 alignment:
 	echo
 	echo 'Alignment tests....'
-	echo "CGTGAATTCATGACTTAC" | $(ALIGNMENT)
+	echo "CGTGAATTCATGACTTAC" | $(ALIGNMENT) --sequences -
 
