@@ -162,7 +162,7 @@ def activate(sequence):
 if __name__ == '__main__':
 
     parser= ArgumentParser(description= 'Convert nucleotide sequence to polypeptide chain')
-    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+    parser.add_argument('--sequences', default= '-', nargs= '+', help= "list of nucleotide sequences [default: '-']")
 
     arguments= parser.parse_args()
     if arguments.sequences is None:
@@ -175,11 +175,14 @@ if __name__ == '__main__':
     if '-' in arguments.sequences:
 
         while True:
+
              nucleotides= stdin.read()
              if not nucleotides:
                  break
+
              nucleotides= nucleotides[:-1]
              sequences= nucleotides.split("\r")
+
     else:
         sequences= arguments.sequences
 

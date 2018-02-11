@@ -30,10 +30,19 @@ class RNAPolymarse:
             template= self._table.get(nucleotide)
             yield self._table.get(template).replace('T', 'U')
 
+def activate(sequences):
+
+    for sequence in sequences: 
+
+        rnapolymarse= RNAPolymarse()
+        rnapolymarse.feed(sequence)
+
+        print >> stdout, ''.join(rnapolymarse.mRNA)
+
 if __name__ == '__main__':
 
     parser= ArgumentParser(description= 'Converts nucleotide sequences into mRNA')
-    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+    parser.add_argument('--sequences', default= '-', nargs= '+', help= 'list of nucleotide sequences [default: -]')
 
     arguments= parser.parse_args()
     if arguments.sequences is None:
@@ -41,16 +50,19 @@ if __name__ == '__main__':
         parser.print_help()
         exit(-1)
 
-    rnapolymarse= RNAPolymarse()
-
     if '-' in arguments.sequences:
+
         while True:
+
             nucleotides= stdin.read()
             if not nucleotides:
                 break
-            nucleotides= nucleotides[:-1]
-            rnapolymarse.feed(nucleotides)
-    else:
-        map(rnapolymarse.feed, arguments.sequences)
 
-    print >> stdout, ''.join(rnapolymarse.mRNA)
+            nucleotides= nucleotides[:-1]
+            sequences= nucleotides.split("\r")
+
+    else:
+        sequences= arguments.sequences
+
+    activate(sequences)
+

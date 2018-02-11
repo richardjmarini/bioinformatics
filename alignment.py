@@ -128,7 +128,7 @@ class Alignment:
 if __name__ == '__main__':
 
     parser= ArgumentParser(description ='Aligns nucleotide sequences')
-    parser.add_argument('--sequences', nargs= '+', help= 'list of nucleotide sequences')
+    parser.add_argument('--sequences', default= '-', nargs= '+', help= "list of nucleotide sequences [default: '-'")
     parser.add_argument('--algorithm', default= 'needleman-wunsch', help= 'name of similarity algorithm to use')
 
     arguments= parser.parse_args()
