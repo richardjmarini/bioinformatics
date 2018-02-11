@@ -30,14 +30,13 @@ class RNAPolymarse:
             template= self._table.get(nucleotide)
             yield self._table.get(template).replace('T', 'U')
 
-def activate(sequences):
+def activate(sequence):
 
-    for sequence in sequences: 
+    rnapolymarse= RNAPolymarse()
+    rnapolymarse.feed(sequence)
 
-        rnapolymarse= RNAPolymarse()
-        rnapolymarse.feed(sequence)
+    print >> stdout, ''.join(rnapolymarse.mRNA)
 
-        print >> stdout, ''.join(rnapolymarse.mRNA)
 
 if __name__ == '__main__':
 
@@ -64,5 +63,5 @@ if __name__ == '__main__':
     else:
         sequences= arguments.sequences
 
-    activate(sequences)
+    map(activate, sequences)
 

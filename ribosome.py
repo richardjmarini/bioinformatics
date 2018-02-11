@@ -155,9 +155,12 @@ class Ribosome:
 def activate(sequence):
 
     ribosome= Ribosome()
+
     ribosome.feed(sequence)
+
     for chain in ribosome.peptide_chains:
         print >> stdout, ''.join(map(str, chain))
+
 
 if __name__ == '__main__':
 
@@ -169,8 +172,6 @@ if __name__ == '__main__':
         print "missing sequences argument"
         parser.print_help()
         exit(-1)
-
-    ribosome= Ribosome()
 
     if '-' in arguments.sequences:
 
@@ -186,5 +187,4 @@ if __name__ == '__main__':
     else:
         sequences= arguments.sequences
 
-    for sequence in sequences:
-        activate(sequence)
+    map(activate, sequences)
