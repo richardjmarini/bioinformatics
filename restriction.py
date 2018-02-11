@@ -10,77 +10,77 @@ class Enzyme:
     _table= {
         "BamHI": {
             "name": "Bacillus amyloliquefaciens H",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "C|GATCC",
                 '3':  "CCTAG|G"
             }
         },
         "BAlI": {
             "name": "Brevibacterium albidum",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "TGG|CCA", 
                 '3': "ACC|GGT"
             }
         },
         "EcoRI": {
             "name": "Escherichia coli RY13",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "G|AATTC",
                 '3': "CTTAA|G"
             }
         },
         "HaeII": {
             "name": "Haemophilus aegyptuis",
-            "restriction_sites": {
-                '5': "[AG]GGC|[TC]", 
+            "restriction_site": {
+                '5': "[AG]CGGC|[TC]", 
                 'c': "[TC]|CGGC[AG]"
             }
         },
         "HaeIII": {
             "name": "Haemophilus aegyptuis", 
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "GG|CC",
                 '3': "CC|GG"
             }
         },
         "HindII": {
             "name": "Haemophilus influenzae Rd",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "GT[TC]|[AG]AC", 
                 '3': "CA[AG]|[TC]TG"
             }
         },
         "HindIII": {
             "name": "Haemophilus influenzae Rd",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "A|AGCTT", 
                 '3': "TTCGA|A"
             }
         },
         "HpaI": {
             "name": "Haemophilius parainfluenzae",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "GTT|AAC", 
                 '3': "GAA|TTC"
             }
         },
         "HpaII": {
             "name": "Haemophilius parainfluenzae",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "C|CGG",
                 '3': "GGC|C"
             }
         },
         "psTI": {
             "name": "Providencia stuartii 164",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "CTGCA|A",
                 '3': "C|ACGTC"
             }
         },
         "SalI": {
             "name": "Streptomyces albus G",
-            "restriction_sites": {
+            "restriction_site": {
                 '5': "G|TCGAC",
                 '3': "CAGCT|G"
             }
