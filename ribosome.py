@@ -152,6 +152,12 @@ class Ribosome:
                 chain= []
         yield chain
 
+def activate(sequence):
+
+    ribosome= Ribosome()
+    ribosome.feed(sequence)
+    for chain in ribosome.peptide_chains:
+        print >> stdout, ''.join(map(str, chain))
 
 if __name__ == '__main__':
 
@@ -173,9 +179,9 @@ if __name__ == '__main__':
              if not nucleotides:
                  break
              nucleotides= nucleotides[:-1]
-             ribosome.feed(nucleotides)
+             sequences= nucleotides.split("\r")
     else:
-        map(ribosome.feed, arguments.sequences)
+        sequences= arguments.sequences
 
-    for chain in ribosome.peptide_chains:
-        print >> stdout, ''.join(map(str, chain))
+    for sequence in sequences:
+        activate(sequence)
