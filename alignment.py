@@ -125,26 +125,36 @@ class Alignment:
         return (alignment_s, alignment_t, alignment_position)
 
 def activate(sequences):
-
+    
     alignment= Alignment()
+    alignment.feed(sequences[0], 0)
 
-    read_ctr= 0
-    for sequence in sequences:
+    read_ctr= 1
+    for sequence in sequences[1:]:
+
         alignment.feed(sequence, read_ctr)
+
+        matrix= alignment.compute_simularity(arguments.algorithm)
+
+        length_t= len(sequences[0])
+        length_s= len(sequence)
+
+        length= max(length_s, length_t)
+        alignment_s= ['-'] * (length + 1)
+        alignment_t= ['-'] * (length + 1)
+
+        alignment.traceback(matrix, length_s, length_t, alignment_s, alignment_t)
+
+        if alignment_s[-1] ==  '-' and alignment_t[-1] == '-':
+            alignment_s= alignment_s[:-1]
+            alignment_t= alignment_t[:-1]
+
+        if read_ctr == 1:
+            print >> stdout, ''.join(alignment_s)
+
+        print >> stdout, ''.join(alignment_t)
+
         read_ctr+= 1
-
-    matrix= alignment.compute_simularity(arguments.algorithm)
-
-    length_t= len(sequences[0])
-    length_s= len(sequences[1])
-    length= max(length_s, length_t)
-    alignment_s= ['-'] * (length + 1)
-    alignment_t= ['-'] * (length + 1)
-   
-    alignment.traceback(matrix, length_s, length_t, alignment_s, alignment_t)
-
-    print >> stdout, ''.join(alignment_s)
-    print >> stdout, ''.join(alignment_t)
 
 
 if __name__ == '__main__':
