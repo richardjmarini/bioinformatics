@@ -124,31 +124,9 @@ class Alignment:
 
         return (alignment_s, alignment_t, alignment_position)
 
-
-if __name__ == '__main__':
-
-    parser= ArgumentParser(description ='Aligns nucleotide sequences')
-    parser.add_argument('--sequences', default= '-', nargs= '+', help= "list of nucleotide sequences [default: '-'")
-    parser.add_argument('--algorithm', default= 'needleman-wunsch', help= 'name of similarity algorithm to use')
-
-    arguments= parser.parse_args()
-    if arguments.sequences is None:
-        print "missing sequences argument"
-        parser.print_help()
-        exit(-1)
+def activate(sequences):
 
     alignment= Alignment()
-
-    sequences= []
-    if '-' in arguments.sequences:
-        while True:
-            nucleotides= stdin.read()
-            if not nucleotides:
-                break
-            nucleotides= nucleotides[:-1]
-            sequences= nucleotides.split("\r")
-    else:
-        sequences= arguments.sequences
 
     read_ctr= 0
     for sequence in sequences:
@@ -167,3 +145,33 @@ if __name__ == '__main__':
 
     print >> stdout, ''.join(alignment_s)
     print >> stdout, ''.join(alignment_t)
+
+
+if __name__ == '__main__':
+
+    parser= ArgumentParser(description ='Aligns nucleotide sequences')
+    parser.add_argument('--sequences', default= '-', nargs= '+', help= "list of nucleotide sequences [default: '-'")
+    parser.add_argument('--algorithm', default= 'needleman-wunsch', help= 'name of similarity algorithm to use')
+
+    arguments= parser.parse_args()
+    if arguments.sequences is None:
+        print "missing sequences argument"
+        parser.print_help()
+        exit(-1)
+
+    sequences= []
+    if '-' in arguments.sequences:
+
+        while True:
+
+            nucleotides= stdin.read()
+            if not nucleotides:
+                break
+
+            nucleotides= nucleotides[:-1]
+            sequences= nucleotides.split("\r")
+
+    else:
+        sequences= arguments.sequences
+
+    activate(sequences)
